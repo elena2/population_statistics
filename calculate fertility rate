@@ -26,38 +26,3 @@ FROM fert_rate2010
 INNER JOIN fert_rate2015
 ON fert_rate2010.continent = fert_rate2015.continent
 ORDER BY perc_dif
-
-
-
-
--- See if there's a relationship between fertility rate and life expectancy, by continent.
-WITH old AS(
-SELECT  co.continent, 
-p.year, 
-AVG(p.fertility_rate) AS avg_fertility2010,
-AVG(p.life_expectancy) AS avg_exp2010
-FROM countries AS co
-LEFT JOIN populations AS p
-ON co.code = p.country_code
-WHERE p.year = 2010
-GROUP BY co.continent, p.year
-),
-
-new AS(
-SELECT  co.continent,
-p.year, 
-AVG(p.fertility_rate) AS avg_fertility2015,
-AVG(p.life_expectancy) AS avg_exp2015
-FROM countries AS co
-LEFT JOIN populations AS p
-ON co.code = p.country_code
-WHERE p.year = 2015
-GROUP BY co.continent, p.year)
-
- 
-SELECT n.continent, o.avg_fertility2010, n.avg_fertility2015, o.avg_exp2010, n.avg_exp2015
-FROM new AS n
-INNER JOIN old AS o
-ON n.continent = o.continent
-ORDER BY o.avg_fertility2010, n.avg_fertility2015
--- from this analysis, I can see that as fertility rate increases, life expectancy decreases. 
